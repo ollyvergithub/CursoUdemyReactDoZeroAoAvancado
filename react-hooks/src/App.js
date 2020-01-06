@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useMemo} from 'react';
+import React, {useState, useEffect, useMemo, useCallback} from 'react';
 
 function App() {
 
@@ -31,12 +31,12 @@ function App() {
         },[tarefas]
     );
 
-
-    const handleAdd = () =>{
+    // Parecida com o useMemo, A diferenças das duas é que a useCallback não é executada no render enquanto a useMemo é.
+    const handleAdd = useCallback(() =>{
         //setTarefas([...tarefas,'Adicionando mais uma tarefa'])
         setTarefas([...tarefas, input])
         setInput('')
-    };
+    }, [tarefas, input]);
 
     return (
         <div className="App">
