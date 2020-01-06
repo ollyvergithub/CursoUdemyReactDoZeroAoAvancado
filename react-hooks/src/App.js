@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useMemo} from 'react';
 
 function App() {
 
@@ -8,6 +8,9 @@ function App() {
 
     const [input, setInput] = useState('');
 
+
+    // Quando a state de tarefas sofrer alteração
+    const totalTarefas =  useMemo(() => tarefas.length, [tarefas]);
 
     // Como se fosse o componentDidMount
     useEffect(() => {
@@ -45,6 +48,8 @@ function App() {
                     <li key={item+index}>{item}</li>
                 ))}
             </ul>
+
+            <h5>Você tem {totalTarefas} tarefas!</h5>
 
             <input type="text" value={input} onChange={(e) =>setInput(e.target.value) } />
 
