@@ -7,6 +7,8 @@ export default function Main() {
     const [newRepo, setNewRepo] = useState('');
     const [repositorios, setRepositorios] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [erro, setErro] = useState(false);
+
 
     const handleChange = (e) => {
         setNewRepo(e.target.value)
@@ -18,12 +20,30 @@ export default function Main() {
         async function submit() {
 
             try {
-                
+
                 setLoading(true);
 
-                const response = await Api.get(`repos/${newRepo}`);
+                if (newRepo === ""){
+                    setErro("O campo input é de preenchimento obrigatório!");
+                    throw new Error("O campo input é de preenchimento obrigatório!")
+                }
 
-                console.log(response.data)
+                const response = await Api.get(`repos/${newRepo}`)
+                    .catch(error =>{
+                        setErro("Repositório NÃO EXISTE, tente outro!");
+                        throw new Error("Repositório NÃO EXISTE, tente outro!")
+                    });
+
+
+
+                console.log(response.data);
+
+                const hasRepo = repositorios.find(repo => repo.name === newRepo);
+
+                if(hasRepo){
+                    setErro("Esse repositório já existe, tente outro!");
+                    throw new Error("Esse repositório já existe, tente outro!")
+                }
 
                 const data = {
                     id: response.data.id,
@@ -34,14 +54,13 @@ export default function Main() {
                 setRepositorios([...repositorios, data]);
                 setNewRepo('')
 
+                setErro(false);
+
             } catch (error) {
-
                 console.log("Erro: ", error)
-
             } finally {
                 setLoading(false)
             }
-
         }
 
         // Como se fosse o componentWillUnmount - Quando desmonta o componente
@@ -54,6 +73,25 @@ export default function Main() {
         const find = repositorios.filter(r => r.name !== repoNome)
         setRepositorios(find)
     }, [repositorios]);
+
+    // DidMount - Buscar
+    useEffect( ()=> {
+        console.log("Buscar", repositorios)
+        const repoStogage = localStorage.getItem('repos');
+        if (repoStogage){
+            setRepositorios(JSON.parse(repoStogage))
+        }
+    }, []);
+
+    //DidUpdate - Salvar Alterações
+    useEffect( ()=> {
+        localStorage.setItem('repos', JSON.stringify(repositorios))
+    }, [repositorios])
+
+
+
+
+
 
     /*async function handleSubmit(e) {
         e.preventDefault();
@@ -84,7 +122,7 @@ export default function Main() {
 
     useEffect( ()=> {
         return console.log("Simulando componentWillUnmount: ", repositorios)
-    }, [repositorios])
+    }, [repositorios]);
 
     return (
         <div className="container">
@@ -112,11 +150,23 @@ export default function Main() {
                 </div>
             </form>
 
+
             <div className="row">
+
                 <div className="col-12 col-md-6">
 
                     {
-                        repositorios.length > 0 ? (
+                        erro ? (
+                            <div className="alert alert-danger" role="alert">
+                                <strong>{erro}</strong>
+                            </div>
+                        ) : null
+                    }
+
+                    {
+
+
+                        repositorios ? (
 
                             <ul className="list-group list-group-flush">
                                 {repositorios.map((item, index)=>(
