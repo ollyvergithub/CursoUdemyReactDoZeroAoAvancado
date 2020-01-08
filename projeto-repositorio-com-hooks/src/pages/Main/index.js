@@ -1,5 +1,7 @@
 import React, {useState, useCallback, useEffect} from "react";
 import {FaGithub, FaPlus, FaBars, FaTrash} from 'react-icons/fa'
+import {Link} from 'react-router-dom'
+
 import Api from "../../services/api";
 
 export default function Main() {
@@ -165,15 +167,17 @@ export default function Main() {
 
                     {
 
-
-                        repositorios ? (
+                        repositorios.length > 0 ? (
 
                             <ul className="list-group list-group-flush">
                                 {repositorios.map((item, index)=>(
                                     <li key={index} className="list-group-item d-flex justify-content-between align-items-end">
                                         <button onClick={()=> handleDelete(item.name)} type={"button"} className="btn btn-danger"><FaTrash/></button>
                                         <span>{item.name} </span>
-                                        <a target="_blank" href={item.url}><FaBars size={20}/></a>
+                                        <Link to={`repositorio/${encodeURIComponent(item.name)}`}>
+                                            <FaBars size={20}/>
+                                        </Link>
+
                                     </li>
                                 ))}
                             </ul>
