@@ -1,4 +1,6 @@
 import React, {useState, useEffect} from "react";
+import {Link} from 'react-router-dom'
+import {FaArrowLeft} from 'react-icons/fa'
 import Api from '../../services/api'
 
 export default function Repositorio({match}) {
@@ -37,31 +39,57 @@ export default function Repositorio({match}) {
 
     }, [match.params.repositorio]);
 
+    if (loading) {
+        return (
+            <div className='container'>
+                <h1>Carregando</h1>
+            </div>
+        )
+    }
+
     return (
+        <>
+            <div className="container">
+                <h1>Pagina Repositorio</h1>
+                <h2>{decodeURIComponent(match.params.repositorio)}</h2>
+                <h3>Repositório escolhido</h3>
+                <p>
+                    <Link to="/">
+                        <FaArrowLeft/>
+                    </Link>
+                </p>
+                <p><img width="150" src={repositorio.owner.avatar_url} alt={repositorio.full_name}/></p>
+                <p className="mt-3">{repositorio.description}</p>
+            </div>
 
-        <div className="container">
-            <h1>Pagina Repositorio</h1>
-            <h2>{decodeURIComponent(match.params.repositorio)}</h2>
+            <div className="container">
+                <h3>Repositório issues</h3>
 
-            {
+                <ul className="list-group list-group-flush">
 
-                repositorio.length > 0 ? (
+                    {issues.map((issue, index) => (
+                        <li key={String(issue.id)} className="list-group-item">
+                            <img width="150" src={issue.user.avatar_url} alt={issue.user.login}/>
 
-                    <ul className="list-group list-group-flush">
-                        {repositorio.map((item, index)=>(
-                            <li key={index} className="list-group-item d-flex justify-content-between align-items-end">
+                            <p><a href={issue.html_url}>{issue.title}</a></p>
 
-                                <span>{item.name} </span>
+                            {
+                                issue.labels.length > 0 ? (
+                                    issue.labels.map((label)=>(
+                                        <span key={label.id}> <strong>Label: </strong>{label.name} </span>
+                                    ))
+                                ): null
+                            }
+
+                            <p><strong>User Login: </strong> {issue.user.login}</p>
+
+                        </li>
+                    ))}
+                </ul>
 
 
-                            </li>
-                        ))}
-                    </ul>
-
-                ) : null
-            }
-
-        </div>
+            </div>
+        </>
     )
 
 }
