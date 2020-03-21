@@ -1,0 +1,16 @@
+@import "variaveis.scss";
+body{
+  overflow-x:hidden;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  background-color: #242424;
+}
+
+
+#main{
+  color: $corFonte;
+
+}
+
+

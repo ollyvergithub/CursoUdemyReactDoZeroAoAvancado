@@ -10,7 +10,34 @@ export default function Repositorio({match}) {
     const [repositorio, setRepositorio] = useState({});
     const [issues, setIssues] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [page, setPage] = useState(1)
+    const [page, setPage] = useState(1);
+    const [statusIssues, setStatusIssues] = useState('all');
+
+    function handleStatusIssues(status) {
+
+        console.log("Ollyver ", status);
+
+        async function setIssueStatus(){
+
+            const nomeRepo = decodeURIComponent(match.params.repositorio);
+
+            const response = await Api.get(`/repos/${nomeRepo}/issues`, {
+                params: {
+                    state: statusIssues,
+                    page,
+                    per_page: 5,
+                }
+            });
+
+            setIssues(response.data)
+
+        }
+
+        setIssueStatus();
+
+        setStatusIssues(status)
+
+    }
 
     // Paginação
     function handlePage(action) {
@@ -25,7 +52,7 @@ export default function Repositorio({match}) {
 
             const response = await Api.get(`/repos/${nomeRepo}/issues`, {
                 params: {
-                    state: 'open',
+                    state: statusIssues,
                     page,
                     per_page: 5,
                 }
@@ -49,7 +76,7 @@ export default function Repositorio({match}) {
                 Api.get(`/repos/${nomeRepo}`),
                 Api.get(`/repos/${nomeRepo}/issues`, {
                     params: {
-                        state: 'open',
+                        state: statusIssues,
                         per_page: 5,
                     }
                 })
@@ -80,8 +107,8 @@ export default function Repositorio({match}) {
         <>
             <div className="container">
                 <h1>Pagina Repositorio</h1>
-                <h2>{decodeURIComponent(match.params.repositorio)}</h2>
-                <h3>Repositório escolhido</h3>
+                <h2>Repositório escolhido: {decodeURIComponent(match.params.repositorio)}</h2>
+
                 <p>
                     <Link to="/">
                         <FaArrowLeft/>
@@ -93,6 +120,12 @@ export default function Repositorio({match}) {
 
             <div className="container">
                 <h3>Repositório issues</h3>
+
+                <h5>Escolha o status das Issues que deseja trazer</h5>
+                <button onClick={() => handleStatusIssues('all')} className='btn btn-success mr-1' type="button">Todas</button>
+                <button onClick={() => handleStatusIssues('open')} className='btn btn-success mr-1' type="button">Open</button>
+                <button onClick={() => handleStatusIssues('closed')} className='btn btn-success' type="button">Closed</button>
+                <hr/>
 
                 <ul className="list-group list-group-flush">
 
