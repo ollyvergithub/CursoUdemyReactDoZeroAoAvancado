@@ -11,3 +11,11 @@ export const removeReserve = (id) => {
         id,
     }
 }
+
+export const updateAmountReserve = (id, amount) => {
+    return {
+        type: 'UPDATE_RESERVE',
+        id,
+        amount
+    }
+}
